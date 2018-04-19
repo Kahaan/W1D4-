@@ -1,7 +1,7 @@
 require_relative "board"
 
 # People write terrible method names in real life.
-# On the job, it is your job to figure out how the methods work and then name them better.
+# On the job, it is your job to figure out how the methods work and then name them better. No its yours
 # Do this now.
 
 class SudokuGame
@@ -51,6 +51,7 @@ class SudokuGame
   end
 
   def process_parameters
+    board.render
     pos_to_val(retrieve_pos_from_ui, retrieve_value_from_ui)
   end
 
