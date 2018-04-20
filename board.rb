@@ -4,17 +4,16 @@ class Board
   attr_reader :grid
 
   def self.empty_grid
-    @grid = Array.new(9) do
+    Array.new(9) do
       Array.new(9) { Tile.new(0) }
     end
-    grid
   end
 
   def self.from_file(filename)
-    rows = File.readlines("filename").map(:chomp)
+    rows = File.readlines(filename).map(&:chomp)
     tiles = rows.map do |row|
-      nums = row.split("").map { |char| parseInt(char) }
-      nums.map { |num| Tle.new(num) }
+      nums = row.split("").map { |char| Integer(char) }
+      nums.map { |num| Tile.new(num) }
     end
 
     self.new(tiles)
@@ -25,24 +24,24 @@ class Board
   end
 
   def [](pos)
-    pos = x,y
+    x, y = pos
     grid[x][y]
   end
 
   def []=(pos, value)
     x, y = pos
     tile = grid[x][y]
-    tile.value = new_value
+    tile.value = value
   end
 
   def columns
-    rows.transpose!
+    rows.transpose
   end
 
   def render
-    puts "(0..8).to_a.join(" ")"
+    puts "   " + (0..8).to_a.join(" ")
     grid.each_with_index do |row, i|
-      puts "#{i} #{row.join(" ")}"
+      puts "#{i}  #{row.join(" ")}"
     end
   end
 
@@ -51,31 +50,38 @@ class Board
     grid.size
   end
 
-  alias_method :rows, :size
+  def rows
+    @grid
+  end
+
 
   def solved?
-    rows.all? { |row| solved_set?(row) } &&
-      columns.all? { |col| solved_set?(col) } &&
-      squares.all? { |square| solved_set?(square) }
+     rows.all? { |row| solved_set?(row) }
+     # &&
+    # columns.all? { |col| solved_set?(col) } &&
+    #squares.all? { |square| solved_set?(square) }
   end
 
   def solved_set?(tiles)
     nums = tiles.map(&:value)
-    nums.sort == (1..9)
+    nums.sort == (1..9).to_a
   end
 
   def square(idx)
     tiles = []
     x = (idx / 3) * 3
     y = (idx % 3) * 3
-
+    positions = []
     (x..x + 3).each do |j|
       (y..y + 3).each do |i|
-        tiles << self[i, j]
+        pos = [j, i]
+        positions << pos
+        # tiles << self[pos]
       end
     end
 
     tiles
+    positions
   end
 
   def squares
